@@ -32,7 +32,7 @@ class HeatMapTestCase(unittest.TestCase):
     def setUp(self):
         self.fig = medical_data_visualizer.draw_heat_map()
         self.ax = self.fig.axes[0]
-        #self.maxDiff= None
+        self.maxDiff= None
     def test_heat_map_labels(self):
         actual = []
         for label in self.ax.get_xticklabels():
