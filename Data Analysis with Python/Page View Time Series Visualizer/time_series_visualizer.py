@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+import numpy as np
 import pandas as pd
 import seaborn as sns
 from pandas.plotting import register_matplotlib_converters
@@ -16,29 +18,49 @@ df = df.loc[(df['value']>df['value'].quantile(0.025)) & (df['value']<df['value']
 def draw_line_plot():
     # Draw line plot
     fig,ax = plt.subplots()
-    df['value'].plot(ax=ax,title="Daily freeCodeCamp Forum Page Views 5/2016-12/2019",color="red")
+    ax.plot(df.loc[:,'value'],color='red')
+    ax.set_title('Daily freeCodeCamp Forum Page Views 5/2016-12/2019')
     ax.set_xlabel('Date')
     ax.set_ylabel('Page Views')
 
     # Save image and return fig (don't change this part)
     fig.savefig('line_plot.png')
     return fig
-
+# function start
 def draw_bar_plot():
     # Copy and modify data for monthly bar plot
-    df_bar = df.resample('ME').mean()    
-    df_bar['Months'] = df_bar.index.strftime('%B')
+    df_bar = df.copy()
+    df_bar['month'] = df_bar.index.strftime('%B')
     df_bar['year'] = df_bar.index.year
+    df_bar = df_bar.groupby(['year', 'month']).mean().reset_index()
     month_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-    df_bar['Months'] = pd.Categorical(df_bar['Months'], categories=month_order, ordered=True)
-
+    df_bar['month'] = pd.Categorical(df_bar['month'], categories=month_order, ordered=True)
+    
     # Draw bar plot
+    width = 0.25
+    years = df_bar['year'].unique().tolist()
+    x = np.arange(1, 1 + len(years) * 5, step=5)
+    multiplier= 0
     fig,ax = plt.subplots()
-    sns.barplot(data= df_bar,x='year', y = 'value',hue='Months',ax=ax,legend=True)
-    ax.legend(loc='upper left', bbox_to_anchor=(1.05, 1))
 
+    for thismonth in month_order:
+        offset = width* multiplier
+        y =df_bar.loc[df_bar['month']==thismonth,'value']
+        if len(y)<len(years):
+            xnew = x[1:]
+            ax.bar(xnew+offset,list(y),width,label=thismonth)
+        else:
+            ax.bar(x+offset,y,width,label=thismonth)
+        multiplier += 1
+
+  #  fig= sns.barplot(data= df_bar,x='year', y = 'value',hue='month',legend=True)
+   
+    ax.set_xticks([2.5, 7.5, 12.5, 17.5])
+    ax.set_xticklabels(years,rotation=90)
+   
     ax.set_xlabel('Years')
     ax.set_ylabel('Average Page Views')
+    ax.legend(loc='upper left',title='Months')
     
     # Save image and return fig (don't change this part)
     fig.savefig('bar_plot.png')
@@ -71,7 +93,3 @@ def draw_box_plot():
     # Save image and return fig (don't change this part)
     fig.savefig('box_plot.png')
     return fig
-
-
-
- 
