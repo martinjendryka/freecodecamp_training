@@ -42,7 +42,6 @@ IMG_HEIGHT = 150
 IMG_WIDTH = 150
 
 
-
 # 3
 train_image_generator = ImageDataGenerator(rescale=1./255)
 validation_image_generator = ImageDataGenerator(rescale=1./255)
