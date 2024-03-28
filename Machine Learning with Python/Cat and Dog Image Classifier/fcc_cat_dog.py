@@ -165,6 +165,7 @@ predictions = model.predict(test_data_gen)
 sample_test_images = next(test_data_gen) # get images of batch
 
 plotImages(sample_test_images, predictions)
+probabilities = predictions.flatten().tolist()
 # # 11
 answers =  [1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0,
             1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0,
@@ -173,7 +174,6 @@ answers =  [1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0,
             0, 0, 0, 0, 0, 0]
 
 correct = 0
-probabilities = predictions.flatten().tolist()
 for probability, answer in zip(probabilities, answers):
    if round(probability) == answer:
      correct +=1
